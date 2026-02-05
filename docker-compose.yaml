@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: skilltrack-postgres
+    environment:
+      POSTGRES_DB: skilltrack
+      POSTGRES_USER: skilltrack
+      POSTGRES_PASSWORD: skilltrack
+    ports:
+      - "5432:5432"
+    volumes:
+      - skilltrack_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skilltrack -d skilltrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  skilltrack_pgdata:
