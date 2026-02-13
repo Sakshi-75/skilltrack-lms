@@ -24,8 +24,10 @@ public interface EnrollmentRepository extends JpaRepository<EnrollmentEntity, UU
     @Query("""
             select e
             from EnrollmentEntity e
-            where e.user.id = :userId
-              and e.course.id = :courseId
+                join fetch e.user u
+                join fetch e.course c
+            where u.id = :userId
+              and c.id = :courseId
               and e.deleted = false
             """)
     Optional<EnrollmentEntity> findByUserIdAndCourseIdAndDeletedFalse(

@@ -60,7 +60,7 @@ public class EnrollmentService {
 
         enrollment.setStatus(EnrollmentStatus.COMPLETED);
         enrollment.setCompletedAt(Instant.now());
-        return enrollment;
+        return enrollmentRepository.save(enrollment);
     }
 
     private void validateIds(UUID userId, UUID courseId) {
