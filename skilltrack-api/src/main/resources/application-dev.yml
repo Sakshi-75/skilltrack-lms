@@ -15,3 +15,9 @@ spring:
 
   flyway:
     enabled: true
+
+security:
+  jwt:
+    # Base64-encoded secret; override via env in real environments
+    secret: ${JWT_SECRET:ZmFrZS1za2lsbHRyYWNrLXNlY3JldC1jaGFuZ2UtbWUtd2l0aC1yZWFsLW9uZQ==}
+    expiration-seconds: 3600
