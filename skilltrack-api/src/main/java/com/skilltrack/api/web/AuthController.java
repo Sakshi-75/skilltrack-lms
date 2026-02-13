@@ -1,11 +1,16 @@
 package com.skilltrack.api.web;
 
-import com.skilltrack.api.web.dto.LoginRequest;
-import com.skilltrack.api.web.dto.LoginResponse;
 import com.skilltrack.api.error.ValidationException;
 import com.skilltrack.api.security.JwtService;
+import com.skilltrack.api.service.UserService;
+import com.skilltrack.api.web.dto.LoginRequest;
+import com.skilltrack.api.web.dto.LoginResponse;
+import com.skilltrack.api.web.dto.RegisterRequest;
+import com.skilltrack.api.web.dto.UserResponse;
+import com.skilltrack.common.domain.user.UserEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,15 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication", description = "Email/password login and JWT issuance")
+@Tag(name = "Authentication", description = "Email/password login, registration and JWT issuance")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserService userService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public AuthController(
+            AuthenticationManager authenticationManager,
+            JwtService jwtService,
+            UserService userService
+    ) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -51,5 +62,19 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/register")
+    @Operation(summary = "Register a new user", description = "Creates a new user account with role STUDENT.")
+    public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest request) {
+        UserEntity user = userService.register(request);
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getDisplayName(),
+                user.getRole()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }
+
 
